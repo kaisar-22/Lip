@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>⚡ KAZJA V1 · DROPPED ICE BALL ⚡</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body {
+            background: radial-gradient(circle at 20% 30%, #1e0f4a, #0a0420);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.2s;
+        }
+        body.light {
+            background: radial-gradient(circle at 20% 30%, #cdb5ff, #b694ff);
+        }
+        .app { max-width: 1100px; margin: 0 auto; }
+        .header {
+            background: #2a1a6ecc;
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border: 1px solid #c77eff;
+        }
+        body.light .header {
+            background: #b794f4cc;
+        }
+        .logo h1 { color: #ffd966; font-size: 1.6rem; }
+        .logo p { color: #cbb5ff; font-size: 0.7rem; }
+        .menu-btn {
+            background: #341f8c;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #ffecb3;
+            width: 48px;
+            height: 48px;
+            border-radius: 30px;
+        }
+        .sidebar {
+            position: fixed; top: 0; right: -280px; width: 260px; height: 100%;
+            background: #1f135ad9; backdrop-filter: blur(16px); transition: 0.3s;
+            z-index: 100; padding: 80px 20px; border-left: 2px solid #c77eff;
+        }
+        body.light .sidebar { background: #f0eaff; }
+        .sidebar.open { right: 0; }
+        .sidebar button {
+            background: #4a2f9e; border: none; padding: 12px; border-radius: 40px;
+            color: #ffecb3; font-weight: bold; margin-bottom: 12px; width: 100%; cursor: pointer;
+        }
+        body.light .sidebar button { background: #c5adff; color: #251c52; }
+        .overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index: 99; display: none;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+        .game-card {
+            background: rgba(35, 20, 80, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 20px;
+            cursor: pointer;
+            border: 1px solid #bd7eff;
+            transition: 0.07s linear;
+            text-align: center;
+        }
+        body.light .game-card { background: rgba(255,255,255,0.85); border-color: #aa6eff; }
+        .game-card:active { transform: scale(0.97); background: #5d3bc2; }
+        .game-card h3 { color: #ffda99; font-size: 1.4rem; margin-bottom: 8px; }
+        body.light .game-card h3 { color: #5b2e9e; }
+        .game-card p { color: #ccaaff; font-size: 0.8rem; }
+        .game-container {
+            background: rgba(25, 12, 65, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 24px;
+            border: 1px solid #c27eff;
+        }
+        body.light .game-container { background: rgba(255,255,255,0.9); border-color: #ac76ff; }
+        .game-title { color: #ffcc66; font-size: 1.6rem; text-align: center; margin-bottom: 20px; }
+        body.light .game-title { color: #8b5cf6; }
+        .btn-primary, .btn-secondary {
+            padding: 10px 18px; border-radius: 40px; font-weight: bold; border: none; cursor: pointer; margin: 4px;
+        }
+        .btn-primary { background: #9c4dff; color: white; }
+        .btn-secondary { background: #4d3b85; color: #f0e6ff; }
+        .game-status { background: #1f124a; border-radius: 30px; padding: 10px; margin: 10px 0; text-align: center; color: #ddbbff; }
+        body.light .game-status { background: #e5d9ff; color: #2e1a6e; }
+        .memory-grid { display: grid; gap: 10px; justify-content: center; margin: 15px 0; }
+        .memory-card { aspect-ratio: 1; background: #5a3cbd; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 2rem; cursor: pointer; border: 2px solid #e2aaff; }
+        .normal-input { background: white; border: 1px solid #aaa; padding: 10px; border-radius: 60px; width: 100%; margin: 8px 0; }
+        .puzzle-grid { display: grid; gap: 6px; justify-content: center; margin: 15px 0; }
+        .puzzle-cell { background: #6a4bcb; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; aspect-ratio: 1; width: 70px; }
+        /* ICE BALL GAME STYLE */
+        .ice-game-card {
+            background: linear-gradient(145deg, #2a3f6e, #1b2b4a);
+            border-radius: 2rem;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #7bc9ff;
+        }
+        .ice-stats {
+            display: flex;
+            justify-content: space-between;
+            background: #0f1f3a;
+            border-radius: 40px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+        .ice-level {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #7bc9ff;
+        }
+        .ice-progress {
+            font-size: 1.2rem;
+            color: #ffdd88;
+        }
+        .ice-timer {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff8866;
+            font-family: monospace;
+        }
+        .ice-button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .ice-btn {
+            background: #2c5282;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .ice-btn-danger { background: #c53030; }
+        .ice-btn-warning { background: #dd8b2f; }
+        .ice-share { background: #319795; }
+        @media (max-width: 700px) { .puzzle-cell { width: 60px; } }
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="header">
+        <div class="logo"><h1>⚡ KAZJA V1 ⚡</h1><p>DROPPED ICE BALL · 12 GAME</p></div>
+        <button class="menu-btn" id="menuBtn">☰</button>
+    </div>
+    <div id="mainView"></div>
+</div>
+<div class="overlay" id="overlay"></div>
+<div class="sidebar" id="sidebar">
+    <button id="lightModeBtn">☀️ Mode Terang</button>
+    <button id="darkModeBtn">🌙 Mode Gelap</button>
+    <button id="backToMenuBtn">🏠 Kembali ke Daftar Game</button>
+</div>
+
+<script>
+    const appView = document.getElementById('mainView');
+    
+    function showMenu() {
+        const games = [
+            { id: 'iceball', name: '❄️ DROPPED ICE BALL', desc: 'Level 12 · 0/120 · Timer' },
+            { id: 'memory', name: '🍎 MEMORY 30 LEVEL', desc: 'Cocokkan kartu' },
+            { id: 'math', name: '🧮 HITUNG-HITUNGAN', desc: 'Jawab soal' },
+            { id: 'guess', name: '🔢 TEBAK ANGKA', desc: 'Tebak 1-100' },
+            { id: 'word', name: '🔤 SUSUN KATA', desc: 'Acak huruf' },
+            { id: 'maze', name: '🧭 LABIRIN 2D', desc: 'Cari jalan keluar' },
+            { id: 'timerGame', name: '⏱️ HITUNG TIMER', desc: 'Jawab cepat' },
+            { id: 'multGame', name: '✖️ PERKALIAN CEPAT', desc: 'Latihan perkalian' },
+            { id: 'flagGame', name: '🏳️ TEBAK NEGARA', desc: 'Dari bendera' },
+            { id: 'capitalGame', name: '🏙️ TEBAK IBUKOTA', desc: 'Ibu kota negara' },
+            { id: 'puzzle', name: '🧩 PUZZLE GESER', desc: 'Susun angka 1-8' },
+            { id: 'colorGame', name: '🎨 TEBAK WARNA', desc: 'Tebak warna' }
+        ];
+        let html = `<div class="game-grid">`;
+        games.forEach(g => {
+            html += `<div class="game-card" data-game="${g.id}"><h3>${g.name}</h3><p>${g.desc}</p></div>`;
+        });
+        html += `</div>`;
+        appView.innerHTML = html;
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.onclick = () => loadGame(card.dataset.game);
+        });
+    }
+    
+    function guide(title, msg) { alert(`📖 ${title}\n\n${msg}`); }
+    
+    async function loadGame(id) {
+        if (id === 'iceball') renderIceBall();
+        else if (id === 'memory') renderMemory();
+        else if (id === 'math') renderMath();
+        else if (id === 'guess') renderGuess();
+        else if (id === 'word') renderWord();
+        else if (id === 'maze') renderMaze();
+        else if (id === 'timerGame') renderTimerGame();
+        else if (id === 'multGame') renderMultGame();
+        else if (id === 'flagGame') renderFlagGame();
+        else if (id === 'capitalGame') renderCapitalGame();
+        else if (id === 'puzzle') renderPuzzle();
+        else if (id === 'colorGame') renderColorGame();
+    }
+    
+    // ======================== ICE BALL GAME (DROPPED ICE BALL) ========================
+    let iceInterval = null;
+    let iceScore = 0;
+    let iceTime = 59;
+    let iceLevel = 12;
+    let iceTarget = 120;
+    
+    function renderIceBall() {
+        let html = `
+        <div class="game-container">
+            <div class="game-title">❄️ DROPPED ICE BALL ❄️</div>
+            <div class="ice-game-card">
+                <div class="ice-stats">
+                    <span class="ice-level">Level ${iceLevel}</span>
+                    <span class="ice-progress">Dropped Ice Ball <span id="iceScoreDisplay">${iceScore}</span>/${iceTarget}</span>
+                </div>
+                <div class="ice-timer" id="iceTimerDisplay">00:${iceTime < 10 ? '0'+iceTime : iceTime}</div>
+                <div class="ice-button-group">
+                    <button class="ice-btn" id="icePlus30">+30 seconds</button>
+                    <button class="ice-btn" id="iceShuffle">Shuffle</button>
+                    <button class="ice-btn" id="iceHint">Hint</button>
+                    <button class="ice-btn ice-btn-danger" id="iceRemoval">Removal</button>
+                </div>
+                <div class="ice-button-group">
+                    <button class="ice-btn ice-btn-warning" id="iceBagikan">Bagikan</button>
+                    <button class="ice-btn" id="iceReset">Reset Game</button>
+                </div>
+                <div class="game-status" id="iceMessage">Klik bola es untuk mengumpulkan! Target: 120</div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <canvas id="iceCanvas" width="300" height="200" style="background: #1a4d6e; border-radius: 30px; max-width:100%;"></canvas>
+            </div>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn-secondary" id="iceBackBtn">Kembali</button>
+            </div>
+        </div>`;
+        appView.innerHTML = html;
+        
+        // Canvas untuk klik bola es
+        const canvas = document.getElementById('iceCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 300;
+        canvas.height = 200;
+        
+        let iceBalls = [];
+        for (let i = 0; i < 8; i++) {
+            iceBalls.push({ x: Math.random() * 260 + 20, y: Math.random() * 160 + 20, radius: 18 });
+        }
+        
+        function drawIce() {
+            ctx.clearRect(0, 0, 300, 200);
+            ctx.fillStyle = '#1a4d6e';
+            ctx.fillRect(0, 0, 300, 200);
+            for (let b of iceBalls) {
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#7bc9ff';
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '20px Arial';
+                ctx.fillText('❄️', b.x - 12, b.y + 8);
+            }
+        }
+        
+        function updateUI() {
+            document.getElementById('iceScoreDisplay').innerText = iceScore;
+            let minutes = Math.floor(iceTime / 60);
+            let seconds = iceTime % 60;
+            document.getElementById('iceTimerDisplay').innerText = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            if (iceScore >= iceTarget) {
+                if (iceInterval) clearInterval(iceInterval);
+                document.getElementById('iceMessage').innerText = '🎉 SELAMAT! Target tercapai! 🎉';
+            }
+        }
+        
+        function startTimer() {
+            if (iceInterval) clearInterval(iceInterval);
+            iceInterval = setInterval(() => {
+                if (iceScore >= iceTarget) return;
+                if (iceTime <= 0) {
+                    clearInterval(iceInterval);
+                    document.getElementById('iceMessage').innerText = '⏰ WAKTU HABIS! Tekan Reset untuk main lagi.';
+                } else {
+                    iceTime--;
+                    updateUI();
+                }
+            }, 1000);
+        }
+        
+        function checkCanvasClick(e) {
+            if (iceScore >= iceTarget) {
+                document.getElementById('iceMessage').innerText = 'Target sudah tercapai! Reset untuk main lagi.';
+                return;
+            }
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let mouseX = (e.clientX - rect.left) * scaleX;
+            let mouseY = (e.clientY - rect.top) * scaleY;
+            for (let i = 0; i < iceBalls.length; i++) {
+                let dx = mouseX - iceBalls[i].x;
+                let dy = mouseY - iceBalls[i].y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < iceBalls[i].radius) {
+                    iceScore++;
+                    updateUI();
+                    iceBalls[i].x = Math.random() * 260 + 20;
+                    iceBalls[i].y = Math.random() * 160 + 20;
+                    drawIce();
+                    document.getElementById('iceMessage').innerText = '❄️ Bola es pecah! +1';
+                    setTimeout(() => { if(iceScore < iceTarget) document.getElementById('iceMessage').innerText = 'Klik bola es untuk mengumpulkan!'; }, 800);
+                    break;
+                }
+            }
+        }
+        
+        canvas.addEventListener('click', checkCanvasClick);
+        
+        document.getElementById('icePlus30').onclick = () => {
+            iceTime += 30;
+            updateUI();
+            document.getElementById('iceMessage').innerText = '⏱️ +30 detik!';
+            setTimeout(() => { if(iceScore < iceTarget) document.getElementById('iceMessage').innerText = 'Klik bola es untuk mengumpulkan!'; }, 1000);
+        };
+        document.getElementById('iceShuffle').onclick = () => {
+            for (let b of iceBalls) {
+                b.x = Math.random() * 260 + 20;
+                b.y = Math.random() * 160 + 20;
+            }
+            drawIce();
+            document.getElementById('iceMessage').innerText = '🔄 Posisi bola diacak!';
+            setTimeout(() => { if(iceScore < iceTarget) document.getElementById('iceMessage').innerText = 'Klik bola es untuk mengumpulkan!'; }, 1000);
+        };
+        document.getElementById('iceHint').onclick = () => {
+            document.getElementById('iceMessage').innerText = '💡 Petunjuk: Klik bola es secepat mungkin!';
+            setTimeout(() => { if(iceScore < iceTarget) document.getElementById('iceMessage').innerText = 'Klik bola es untuk mengumpulkan!'; }, 2000);
+        };
+        document.getElementById('iceRemoval').onclick = () => {
+            if (iceBalls.length > 1) {
+                iceBalls.pop();
+                drawIce();
+                document.getElementById('iceMessage').innerText = '🗑️ Satu bola es dihapus!';
+            } else {
+                document.getElementById('iceMessage').innerText = 'Tidak bisa hapus, minimal 1 bola!';
+            }
+            setTimeout(() => { if(iceScore < iceTarget) document.getElementById('iceMessage').innerText = 'Klik bola es untuk mengumpulkan!'; }, 1500);
+        };
+        document.getElementById('iceBagikan').onclick = () => {
+            alert('🔗 Bagikan game ini: https://kazjagame.com/iceball | Skor: ' + iceScore);
+        };
+        document.getElementById('iceReset').onclick = () => {
+            if (iceInterval) clearInterval(iceInterval);
+            iceScore = 0;
+            iceTime = 59;
+            iceLevel = 12;
+            iceTarget = 120;
+            iceBalls = [];
+            for (let i = 0; i < 8; i++) {
+                iceBalls.push({ x: Math.random() * 260 + 20, y: Math.random() * 160 + 20, radius: 18 });
+            }
+            drawIce();
+            updateUI();
+            startTimer();
+            document.getElementById('iceMessage').innerText = 'Game direset! Klik bola es untuk mulai.';
+        };
+        document.getElementById('iceBackBtn').onclick = () => {
+            if (iceInterval) clearInterval(iceInterval);
+            showMenu();
+        };
+        drawIce();
+        startTimer();
+        guide("Dropped Ice Ball", "Klik bola es yang jatuh untuk mengumpulkan skor. Target 120 poin. Gunakan +30 detik, Shuffle, Hint, Removal untuk membantu. Hati-hati waktu!");
+    }
+    
+    // ======================== GAME LAIN (LENGKAP, TIDAK ERROR) ========================
+    function renderMemory() { guide("Memory", "Cocokkan kartu berpasangan. 2 pemain giliran."); let lvl=1, cards=[], flip=[], match=[], lock=false, player=0, scoreP=[0,0]; let items=['🍎','🍌','🍒','🍉','🍊','🍓','🥝','🍑','🍋','🍈','🥭','🍐','🍏','🐶','🐱']; function getPairs(l){ return Math.min(6+Math.floor((l-1)*0.8),12); } function init(){ let p=getPairs(lvl); let sel=[...items].sort(()=>Math.random()-0.5).slice(0,p); let newC=[]; for(let i of sel){ newC.push(i,i); } for(let i=newC.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [newC[i],newC[j]]=[newC[j],newC[i]]; } cards=newC; flip=Array(cards.length).fill(false); match=Array(cards.length).fill(false); lock=false; player=0; scoreP=[0,0]; render(); } function render(){ let cont=document.getElementById('memMount'); if(!cont)return; let cols=Math.min(5,Math.ceil(Math.sqrt(cards.length))); let html=`<div class="game-container"><div class="game-title">🍎 MEMORY LV ${lvl}/30</div><div class="memory-grid" style="display:grid; grid-template-columns:repeat(${cols},minmax(70px,85px)); gap:10px; justify-content:center;">`; for(let i=0;i<cards.length;i++){ let show=flip[i]||match[i]; html+=`<div class="memory-card" data-idx="${i}">${show?cards[i]:'?'}</div>`; } html+=`</div><div class="game-status">Giliran P${player+1} | Skor ${scoreP[0]} - ${scoreP[1]}</div><div class="btn-group"><button class="btn-primary" id="resetMemBtn">Reset Level</button><button class="btn-secondary" id="backMemBtn">Kembali</button></div></div>`; cont.innerHTML=html; document.querySelectorAll('.memory-card').forEach(el=>{ el.onclick=()=>cardClick(parseInt(el.dataset.idx)); }); } function cardClick(idx){ if(lock||match[idx]||flip[idx])return; flip[idx]=true; let open=[]; for(let i=0;i<flip.length;i++) if(flip[i]&&!match[i]) open.push(i); if(open.length===2){ lock=true; let i1=open[0],i2=open[1]; if(cards[i1]===cards[i2]){ match[i1]=match[i2]=true; scoreP[player]++; flip[i1]=flip[i2]=false; if(scoreP[0]+scoreP[1]===cards.length/2){ if(lvl<30){ alert(`🎉 Level ${lvl} selesai! Lanjut level ${lvl+1}`); lvl++; init(); }else alert("🏆 SELAMAT! SEMUA LEVEL SELESAI!"); }else{ lock=false; render(); } }else{ setTimeout(()=>{ flip[i1]=flip[i2]=false; lock=false; player=1-player; render(); },700); } render(); }else render(); } appView.innerHTML=`<div id="memMount"></div>`; init(); setTimeout(()=>{ document.getElementById('resetMemBtn')?.addEventListener('click',()=>init()); document.getElementById('backMemBtn')?.addEventListener('click',showMenu); },100); }
+    function renderMath(){ guide("Hitung","Jawab soal."); let html=`<div class="game-container"><div class="game-title">🧮 HITUNG</div><div class="game-status" id="mathQ">5+3=?</div><input id="mathInp" class="normal-input"><div class="btn-group"><button class="btn-primary" id="mathCek">Cek</button><button class="btn-secondary" id="mathReset">Reset</button></div><div class="game-status" id="mathStat">Skor:0</div><button class="btn-secondary" id="mathBack">Kembali</button></div>`; appView.innerHTML=html; let skor=0, q={text:'5+3',ans:8}; function gen(){let a=Math.floor(Math.random()*20)+1,b=Math.floor(Math.random()*20)+1,op=['+','-','*'][Math.floor(Math.random()*3)],ans=op==='+'?a+b:op==='-'?a-b:a*b; q={text:`${a} ${op} ${b}`,ans}; document.getElementById('mathQ').innerText=q.text;} gen(); document.getElementById('mathCek').onclick=()=>{let v=parseInt(document.getElementById('mathInp').value); if(v===q.ans){skor++; document.getElementById('mathStat').innerHTML=`✅ Skor:${skor}`; gen();} else document.getElementById('mathStat').innerHTML=`❌ Skor:${skor}`;}; document.getElementById('mathReset').onclick=()=>{skor=0; gen(); document.getElementById('mathStat').innerHTML='Skor:0';}; document.getElementById('mathBack').onclick=showMenu; }
+    function renderGuess(){ guide("Tebak Angka","1-100"); let secret=Math.floor(Math.random()*100)+1; let html=`<div class="game-container"><div class="game-title">🔢 TEBAK ANGKA</div><input id="guessInp" class="normal-input"><div class="btn-group"><button class="btn-primary" id="guessBtn">Tebak</button><button class="btn-secondary" id="guessReset">Reset</button></div><div class="game-status" id="guessStat">Tebak 1-100</div><button class="btn-secondary" id="guessBack">Kembali</button></div>`; appView.innerHTML=html; document.getElementById('guessBtn').onclick=()=>{let g=parseInt(document.getElementById('guessInp').value); if(isNaN(g))return; let msg=(g===secret)?`🎉 Benar!`:(g<secret?'📈 Kecil':'📉 Besar'); document.getElementById('guessStat').innerText=msg; if(g===secret){secret=Math.floor(Math.random()*100)+1; document.getElementById('guessStat').innerText='Angka baru! Tebak lagi';}}; document.getElementById('guessReset').onclick=()=>{secret=Math.floor(Math.random()*100)+1; document.getElementById('guessStat').innerText='Tebak 1-100';}; document.getElementById('guessBack').onclick=showMenu; }
+    function renderWord(){ guide("Susun Kata","Acak huruf jadi kata"); let kata=["PINTAR","SAHABAT","CERDAS","HEBAT","JUARA"], curr, skor=0; let html=`<div class="game-container"><div class="game-title">🔤 SUSUN KATA</div><div class="game-status" id="wordScrambled">ACAK</div><input id="wordInp" class="normal-input"><div class="btn-group"><button class="btn-primary" id="wordCek">Jawab</button><button class="btn-secondary" id="wordReset">Reset</button></div><div class="game-status" id="wordStat">Skor:0</div><button class="btn-secondary" id="wordBack">Kembali</button></div>`; appView.innerHTML=html; function acak(){curr=kata[Math.floor(Math.random()*kata.length)]; let acak=curr.split('').sort(()=>Math.random()-0.5).join(''); document.getElementById('wordScrambled').innerHTML=acak;} acak(); document.getElementById('wordCek').onclick=()=>{let inp=document.getElementById('wordInp').value.toUpperCase(); if(inp===curr){skor++; document.getElementById('wordStat').innerHTML=`✅ Skor:${skor}`; acak();} else document.getElementById('wordStat').innerHTML=`❌ Skor:${skor}`;}; document.getElementById('wordReset').onclick=()=>{skor=0; acak(); document.getElementById('wordStat').innerHTML='Skor:0';}; document.getElementById('wordBack').onclick=showMenu; }
+    function renderMaze(){ guide("Labirin","Panah, capai bendera 🏁"); let map=["███████████████","█             █","█ █████ █████ █","█         █   █","█ ███ ███ █ █ █","█         █ █ █","█ ███████ █ █ █","█           █ █","███████████████"]; let player={x:1,y:1}, finish={x:13,y:7}; function renderM(){ let cont=document.getElementById('mazeCont'); if(!cont)return; let h='<div style="display:inline-grid;">'; for(let i=0;i<map.length;i++){ h+='<div style="display:flex;">'; for(let j=0;j<map[i].length;j++){ let bg=map[i][j]=='█'?'#2d1d6e':(player.x==j&&player.y==i?'#b77cff':(finish.x==j&&finish.y==i?'#55ff88':'#3d2b7a')); let txt=''; if(player.x==j&&player.y==i) txt='😀'; else if(finish.x==j&&finish.y==i) txt='🏁'; h+=`<div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:${bg}">${txt}</div>`; } h+='</div>'; } h+='</div>'; cont.innerHTML=h; } function move(dx,dy){ let nx=player.x+dx, ny=player.y+dy; if(map[ny] && map[ny][nx]!=='█'){ player={x:nx,y:ny}; renderM(); if(player.x===finish.x && player.y===finish.y) alert("✨ Keluar!"); } } let html=`<div class="game-container"><div class="game-title">🧭 LABIRIN</div><div id="mazeCont" style="background:#1e1652; border-radius:28px; padding:10px;"></div><div class="btn-group"><button class="btn-primary" id="mUp">⬆️</button><button class="btn-primary" id="mLeft">⬅️</button><button class="btn-primary" id="mDown">⬇️</button><button class="btn-primary" id="mRight">➡️</button></div><button class="btn-secondary" id="mazeBack">Kembali</button></div>`; appView.innerHTML=html; renderM(); document.getElementById('mUp').onclick=()=>move(0,-1); document.getElementById('mDown').onclick=()=>move(0,1); document.getElementById('mLeft').onclick=()=>move(-1,0); document.getElementById('mRight').onclick=()=>move(1,0); document.getElementById('mazeBack').onclick=showMenu; }
+    function renderTimerGame(){ guide("Hitungan Timer","Jawab sebelum waktu habis"); let html=`<div class="game-container"><div class="game-title">⏱️ HITUNG TIMER</div><div class="game-status" id="timerTime">Waktu: 30s</div><div class="game-status" id="timerQ">5+3=?</div><div id="timerBtns" class="btn-group"></div><div class="game-status" id="timerScore">Skor:0</div><button class="btn-primary" id="timerStart">Mulai</button><button class="btn-secondary" id="timerReset">Reset</button><button class="btn-secondary" id="timerBack">Kembali</button></div>`; appView.innerHTML=html; let time=30,score=0,q={ans:8},active=false,iv=null; function gen(){let a=Math.floor(Math.random()*12)+1,b=Math.floor(Math.random()*12)+1; q={ans:a+b,text:`${a}+${b}=?`}; document.getElementById('timerQ').innerText=q.text;} function start(){if(iv)clearInterval(iv); active=true; time=30; score=0; gen(); document.getElementById('timerScore').innerText='Skor:0'; document.getElementById('timerTime').innerText='Waktu: 30s'; iv=setInterval(()=>{if(!active)return; time--; document.getElementById('timerTime').innerText=`Waktu: ${time}s`; if(time<=0){clearInterval(iv); active=false; alert(`Waktu habis! Skor: ${score}`);}},1000);} function answer(v){if(!active)return; if(v===q.ans){score++; document.getElementById('timerScore').innerText=`Skor:${score}`; gen();} else{score=Math.max(0,score-1); document.getElementById('timerScore').innerText=`Skor:${score}`;}} let btnDiv=document.getElementById('timerBtns'); for(let i=0;i<=9;i++){let b=document.createElement('button'); b.className='btn-primary'; b.innerText=i; b.onclick=()=>answer(i); btnDiv.appendChild(b);} document.getElementById('timerStart').onclick=start; document.getElementById('timerReset').onclick=()=>{if(iv)clearInterval(iv); active=false;}; document.getElementById('timerBack').onclick=showMenu; }
+    function renderMultGame(){ guide("Perkalian Cepat","Jawab perkalian"); let html=`<div class="game-container"><div class="game-title">✖️ PERKALIAN</div><div class="game-status" id="multQ">3x4=?</div><input id="multInp" class="normal-input"><div class="btn-group"><button class="btn-primary" id="multCek">Cek</button><button class="btn-secondary" id="multReset">Reset</button></div><div class="game-status" id="multStat">Skor:0</div><button class="btn-secondary" id="multBack">Kembali</button></div>`; appView.innerHTML=html; let skor=0, a=3,b=4; function gen(){a=Math.floor(Math.random()*10)+1; b=Math.floor(Math.random()*10)+1; document.getElementById('multQ').innerText=`${a} x ${b} = ?`;} gen(); document.getElementById('multCek').onclick=()=>{let v=parseInt(document.getElementById('multInp').value); if(v===a*b){skor++; document.getElementById('multStat').innerHTML=`✅ Skor:${skor}`; gen();} else document.getElementById('multStat').innerHTML=`❌ Skor:${skor}`;}; document.getElementById('multReset').onclick=()=>{skor=0; gen(); document.getElementById('multStat').innerHTML='Skor:0';}; document.getElementById('multBack').onclick=showMenu; }
+    function renderFlagGame(){ guide("Tebak Negara","Pilih nama negara dari bendera"); let flags=[{name:"Indonesia",img:"https://upload.wikimedia.org/wikipedia/commons/9/9f/Flag_of_Indonesia.svg",opt:["Indonesia","Malaysia","Singapura","Filipina"]},{name:"Jepang",img:"https://upload.wikimedia.org/wikipedia/en/9/9e/Flag_of_Japan.svg",opt:["Jepang","China","Korea","Vietnam"]},{name:"Prancis",img:"https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg",opt:["Prancis","Jerman","Italia","Spanyol"]},{name:"Jerman",img:"https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg",opt:["Jerman","Belanda","Austria","Swiss"]},{name:"Brasil",img:"https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg",opt:["Brasil","Argentina","Uruguay","Chili"]}]; let idx=0,score=0; function render(){ if(idx>=flags.length){ appView.innerHTML=`<div class="game-container"><div class="game-title">🏆 Skor: ${score}/${flags.length}</div><button class="btn-primary" onclick="location.reload()">Ulangi</button><button class="btn-secondary" id="backFlag">Kembali</button></div>`; document.getElementById('backFlag').onclick=showMenu; return; } let f=flags[idx]; let html=`<div class="game-container"><div class="game-title">🏳️ TEBAK NEGARA</div><img src="${f.img}" style="width:150px; border-radius:20px; margin:10px auto; display:block;"><div class="btn-group">`; f.opt.forEach(o=>{ html+=`<button class="btn-primary" onclick="window.checkFlag('${o}')">${o}</button>`; }); html+=`</div><div class="game-status">Skor: ${score}/${flags.length}</div><button class="btn-secondary" id="flagBack">Kembali</button></div>`; appView.innerHTML=html; document.getElementById('flagBack').onclick=showMenu; window.checkFlag=(ans)=>{ if(ans===f.name){ score++; } idx++; render(); }; } render(); }
+    function renderCapitalGame(){ guide("Tebak Ibukota","Tulis ibukota"); let capitals=[{country:"Indonesia",capital:"Jakarta"},{country:"Jepang",capital:"Tokyo"},{country:"Prancis",capital:"Paris"},{country:"Jerman",capital:"Berlin"},{country:"Inggris",capital:"London"}]; let idx=0,score=0; function render(){ if(idx>=capitals.length){ appView.innerHTML=`<div class="game-container"><div class="game-title">🏆 Skor: ${score}/${capitals.length}</div><button class="btn-primary" onclick="location.reload()">Ulangi</button><button class="btn-secondary" id="backCap">Kembali</button></div>`; document.getElementById('backCap').onclick=showMenu; return; } let c=capitals[idx]; let html=`<div class="game-container"><div class="game-title">🏙️ TEBAK IBUKOTA</div><div class="game-status">Negara: ${c.country}</div><input id="capInp" class="normal-input"><div class="btn-group"><button class="btn-primary" id="capSubmit">Jawab</button><button class="btn-secondary" id="capSkip">Lewati</button></div><div class="game-status">Skor: ${score}/${capitals.length}</div><button class="btn-secondary" id="capBack">Kembali</button></div>`; appView.innerHTML=html; document.getElementById('capSubmit').onclick=()=>{ let inp=document.getElementById('capInp').value.trim().toLowerCase(); if(inp===c.capital.toLowerCase()) score++; idx++; render(); }; document.getElementById('capSkip').onclick=()=>{ idx++; render(); }; document.getElementById('capBack').onclick=showMenu; } render(); }
+    function renderPuzzle(){ guide("Puzzle Geser","Susun angka 1-8"); let tiles=[[1,2,3],[4,5,6],[7,8,0]], empty={row:2,col:2}; function renderP(){ let cont=document.getElementById('puzzleCont'); if(!cont)return; let grid=document.createElement('div'); grid.style.display='grid'; grid.style.gridTemplateColumns='repeat(3,70px)'; grid.style.gap='8px'; grid.style.justifyContent='center'; for(let i=0;i<3;i++) for(let j=0;j<3;j++){ let cell=document.createElement('div'); cell.className='puzzle-cell'; cell.innerText=tiles[i][j]||''; cell.onclick=()=>{ if((Math.abs(i-empty.row)+Math.abs(j-empty.col))===1){ tiles[empty.row][empty.col]=tiles[i][j]; tiles[i][j]=0; empty={row:i,col:j}; renderP(); if(JSON.stringify(tiles.flat())===JSON.stringify([1,2,3,4,5,6,7,8,0])) alert("🎉 SELAMAT!"); } }; grid.appendChild(cell); } cont.innerHTML=''; cont.appendChild(grid); } let html=`<div class="game-container"><div class="game-title">🧩 PUZZLE</div><div id="puzzleCont"></div><button class="btn-primary" id="puzzleReset">Reset</button><button class="btn-secondary" id="puzzleBack">Kembali</button></div>`; appView.innerHTML=html; renderP(); document.getElementById('puzzleReset').onclick=()=>{ tiles=[[1,2,3],[4,5,6],[7,8,0]]; empty={row:2,col:2}; renderP(); }; document.getElementById('puzzleBack').onclick=showMenu; }
+    function renderColorGame(){ guide("Tebak Warna","Klik warna yang cocok"); let colors=[{name:"Merah",code:"#ff0000"},{name:"Biru",code:"#0000ff"},{name:"Hijau",code:"#00ff00"},{name:"Kuning",code:"#ffff00"},{name:"Ungu",code:"#800080"}]; let current,score=0; function newQ(){ current=colors[Math.floor(Math.random()*colors.length)]; document.getElementById('colorBox').style.backgroundColor=current.code; let opts=[current.name]; while(opts.length<4){ let r=colors[Math.floor(Math.random()*colors.length)].name; if(!opts.includes(r)) opts.push(r); } opts.sort(()=>Math.random()-0.5); let btns=''; opts.forEach(o=>{ btns+=`<button class="btn-primary colorOpt" data-c="${o}">${o}</button>`; }); document.getElementById('colorOpts').innerHTML=btns; document.querySelectorAll('.colorOpt').forEach(btn=>{ btn.onclick=()=>{ if(btn.innerText===current.name){ score++; document.getElementById('colorScore').innerText=`Skor: ${score}`; newQ(); }else{ score=Math.max(0,score-1); document.getElementById('colorScore').innerText=`Skor: ${score}`; newQ(); } }; }); } let html=`<div class="game-container"><div class="game-title">🎨 TEBAK WARNA</div><div id="colorBox" style="width:100%; height:120px; border-radius:30px; margin:10px 0;"></div><div id="colorOpts" class="btn-group"></div><div class="game-status" id="colorScore">Skor:0</div><button class="btn-secondary" id="colorBack">Kembali</button></div>`; appView.innerHTML=html; score=0; newQ(); document.getElementById('colorBack').onclick=showMenu; }
+    
+    // ======================== MODE TERANG/GELAP ========================
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').style.display = document.getElementById('sidebar').classList.contains('open') ? 'block' : 'none';
+    }
+    document.getElementById('menuBtn').onclick = toggleMenu;
+    document.getElementById('overlay').onclick = () => {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('overlay').style.display = 'none';
+    };
+    document.getElementById('lightModeBtn').onclick = () => {
+        document.body.classList.add('light');
+        toggleMenu();
+    };
+    document.getElementById('darkModeBtn').onclick = () => {
+        document.body.classList.remove('light');
+        toggleMenu();
+    };
+    document.getElementById('backToMenuBtn').onclick = () => { showMenu(); toggleMenu(); };
+    
+    showMenu();
+</script>
+</body>
+</html>
